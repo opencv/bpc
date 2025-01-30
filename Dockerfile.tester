@@ -10,8 +10,6 @@ ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp
 # underlay stage: base + dependencies built
 FROM base AS underlay
 
-ARG BOP_PATH
-
 ADD ibpc_interfaces /opt/ros/underlay/src/ibpc_interfaces
 
 RUN . /opt/ros/jazzy/setup.sh \
@@ -21,8 +19,6 @@ RUN . /opt/ros/jazzy/setup.sh \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     --event-handlers=console_direct+ \
     --merge-install
-
-ADD ${BOP_PATH} /opt/ros/underlay/install/datasets
 
 FROM underlay AS overlay
 

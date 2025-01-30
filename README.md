@@ -98,7 +98,8 @@ ros2 run ibpc_tester ibpc_tester --ros-args -p datset_name:=<DATASET_NAME>
 
 #### With Docker
 ```bash
-docker run --network=host ibpc:tester
+docker run --network=host -v/home/tullyfoote/ws/ibpc/lm:/opt/ros/underlay/install/datasets/lm -it ibpc:tester 
+
 ```
 
 #### Query the pose estimator directly

@@ -18,9 +18,18 @@ from bop_toolkit_lib.inout import load_json, load_scene_gt, load_scene_camera, l
 from ibpc_interfaces.msg import PoseEstimate
 from ibpc_interfaces.srv import GetPoseEstimates
 
+from scipy.spatial.transform import Rotation
+
+def matrix_to_quat(R):
+    r = Rotation.from_matrix(R)
+    q = r.as_quat()
+    return q
+
+
 class BOPCamera:
     def __init__(self, path, camera_name, img_id):
         self._load_images(path, camera_name, img_id)
+        self._load_camera_params(path, camera_name, img_id)
 
     def _load_images(self, path, camera_name, img_id):
         self.im = load_im(f'{path}/rgb_{camera_name}/{img_id:06d}.png')
@@ -32,6 +41,12 @@ class BOPCamera:
             self.aolp = None
             self.dolp = None
 
+    def _load_camera_params(self, path, camera_name, img_id):
+        self.camera_params = load_scene_camera(f'{path}/scene_camera_{camera_name}.json')[img_id]
+        self.K = self.camera_params['cam_K']
+        self.R = self.camera_params['cam_R_w2c']
+        self.t = self.camera_params['cam_t_w2c']
+        self.q = matrix_to_quat(self.R)
 
 def main(argv=sys.argv):
     rclpy.init(args=argv)

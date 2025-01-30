@@ -98,7 +98,7 @@ ros2 run ibpc_tester ibpc_tester --ros-args -p datset_name:=<DATASET_NAME>
 
 #### With Docker
 ```bash
-docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets/lm -v/home/tullyfoote/ws/ibpc/lm:/opt/ros/underlay/install/datasets/lm -it ibpc:tester 
+docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -v/home/tullyfoote/ws/ibpc/lm:/opt/ros/underlay/install/datasets/lm -it ibpc:tester 
 
 ```
 

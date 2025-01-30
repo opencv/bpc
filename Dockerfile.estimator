@@ -1,4 +1,4 @@
-FROM ghcr.io/yadunund/ibpc/estimator-base:latest AS base
+FROM ros:jazzy-perception AS base
 
 SHELL [ "/bin/bash" , "-c" ]
 

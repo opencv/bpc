@@ -50,6 +50,30 @@ def pose_mat_to_ros(rot: np.ndarray, trans: np.ndarray):
     return msg
 
 
+class DebugPublishers:
+    def __init__(self, camera_name: str, node: Node):
+        # Debug parameters.
+        qos_profile = QoSProfile(
+            depth=10,  # Queue size (adjust as needed)
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            reliability=ReliabilityPolicy.RELIABLE,  # or RELIABLE, depending on your needs
+        )
+        self.rgb_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/rgb", qos_profile)
+        self.depth_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/depth", qos_profile)
+        self.aolp_pub = None
+        self.dolp_pub = None
+        if camera_name != "photoneo":
+            self.aolp_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/aolp", qos_profile)
+            self.dolp_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/dolp", qos_profile)
+
+    def publish(self, rgb: Image, depth: Image, aolp: Image = None, dolp: Image = None):
+        self.rgb_pub.publish(rgb)
+        self.depth_pub.publish(depth)
+        if aolp is not None and self.aolp_pub is not None:
+            self.aolp_pub.publish(aolp)
+        if dolp is not None and self.dolp_pub is not None:
+            self.dolp_pub.publish(dolp)
+
 class BOPCamera:
     def __init__(self, path, camera_name, img_id):
         self._load_images(path, camera_name, img_id)
@@ -70,20 +94,21 @@ class BOPCamera:
             self.dolp = None
         self.br = CvBridge()
 
-    def to_camera_msg(self, node, debug_pub) -> CameraMsg:
+    def to_camera_msg(self, node, debug_pubs : DebugPublishers) -> CameraMsg:
         msg = CameraMsg()
         msg.info.header.frame_id = self.camera_name
         # msg.info.header.stamp = node.get_clock().now()
         msg.info.k = self.K.reshape(-1)
         msg.pose = pose_mat_to_ros(self.R, self.t)
         msg.rgb = self.br.cv2_to_imgmsg(self.rgb, "8UC1")
-        debug_pub.publish(msg.rgb)
         msg.depth = self.br.cv2_to_imgmsg(self.depth, "32FC1")
         msg.aolp = self.br.cv2_to_imgmsg(self.aolp, "8UC1")
         msg.dolp = self.br.cv2_to_imgmsg(self.dolp, "8UC1")
+        if debug_pubs is not None:
+            debug_pubs.publish(msg.rgb, msg.depth, msg.aolp, msg.dolp)
         return msg
 
-    def to_photoneo_msg(self, node, debug_pub) -> PhotoneoMsg:
+    def to_photoneo_msg(self, node, debug_pubs : DebugPublishers) -> PhotoneoMsg:
         msg = PhotoneoMsg()
         msg.info.header.frame_id = self.camera_name
         # msg.info.header.stamp = node.get_clock().now()
@@ -91,6 +116,9 @@ class BOPCamera:
         msg.pose = pose_mat_to_ros(self.R, self.t)
         msg.rgb = self.br.cv2_to_imgmsg(self.rgb, "8UC1")
         msg.depth = self.br.cv2_to_imgmsg(self.depth, "32FC1")
+        if debug_pubs is not None:
+            debug_pubs.publish(msg.rgb, msg.depth)
+        return msg
 
     def _load_camera_params(self, path, camera_name, img_id):
         self.camera_params = load_scene_camera(
@@ -114,13 +142,16 @@ def main(argv=sys.argv):
     dataset_name = node.get_parameter("dataset_name").get_parameter_value().string_value
     node.get_logger().info("Loading from dataset {dataset_name}.")
 
-    # Debug parameters.
-    qos_profile = QoSProfile(
-        depth=10,  # Queue size (adjust as needed)
-        durability=DurabilityPolicy.TRANSIENT_LOCAL,
-        reliability=ReliabilityPolicy.RELIABLE,  # or RELIABLE, depending on your needs
-    )
-    debug_pub = node.create_publisher(Image, "/ibpc_tester_debug_images", qos_profile)
+    debug_cam_1 = None
+    debug_cam_2 = None
+    debug_cam_3 = None
+    debug_photoneo = None
+    debug : bool = node.declare_parameter("debug", False).get_parameter_value().bool_value
+    if debug:
+        debug_cam_1 = DebugPublishers("cam1", node)
+        debug_cam_2 = DebugPublishers("cam2", node)
+        debug_cam_3 = DebugPublishers("cam3", node)
+        debug_photoneo = DebugPublishers("photoneo", node)
 
     # Load the test split.
     test_split = get_split_params(datasets_path, dataset_name, "test")
@@ -144,15 +175,15 @@ def main(argv=sys.argv):
         for img_id, obj_gts in scene_gt.items():
             request = GetPoseEstimates.Request()
             request.cameras.append(
-                BOPCamera(scene_dir, "cam1", img_id).to_camera_msg(node, debug_pub)
+                BOPCamera(scene_dir, "cam1", img_id).to_camera_msg(node, debug_cam_1)
             )
             request.cameras.append(
-                BOPCamera(scene_dir, "cam2", img_id).to_camera_msg(node, debug_pub)
+                BOPCamera(scene_dir, "cam2", img_id).to_camera_msg(node, debug_cam_2)
             )
             request.cameras.append(
-                BOPCamera(scene_dir, "cam3", img_id).to_camera_msg(node, debug_pub)
+                BOPCamera(scene_dir, "cam3", img_id).to_camera_msg(node, debug_cam_3)
             )
-            # request.photoneo = BOPCamera(scene_dir, 'photoneo', img_id).to_photoneo_msg(node)
+            request.photoneo = BOPCamera(scene_dir, 'photoneo', img_id).to_photoneo_msg(node, debug_photoneo)
             # todo(Yadunund): Load corresponding rgb, depth and polarized image for this img_id.
             for obj_gt in obj_gts:
                 request.object_ids.append(int(obj_gt["obj_id"]))

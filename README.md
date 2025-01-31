@@ -53,8 +53,7 @@ Build the `ibpc_tester`.
 cd ~/ws_ibpc/src/ibpc
 docker buildx build -t ibpc:tester \
     --file ./Dockerfile.tester \
-    --build-arg="BOP_PATH=datasets" \
-    --build-arg="DATASET_NAME=lm" \
+    --build-arg="DATASET_NAME=ipd" \
     .
 ```
 > Note: The BOP_PATH envar should point to a folder that contains models in the BOP format.
@@ -98,7 +97,7 @@ ros2 run ibpc_tester ibpc_tester --ros-args -p datset_name:=<DATASET_NAME>
 
 #### With Docker
 ```bash
-docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -v/home/tullyfoote/ws/ibpc/lm:/opt/ros/underlay/install/datasets/lm -it ibpc:tester 
+docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -e DATASET_NAME=ipd -v$HOME/ws/ibpc/lm:/opt/ros/underlay/install/datasets/lm -it ibpc:tester
 
 ```
 

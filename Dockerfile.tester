@@ -72,7 +72,6 @@ RUN sed --in-place \
 ENV DATASET_NAME=${DATASET_NAME}
 ENV SERVICE_PACKAGE=${SERVICE_PACKAGE}
 ENV SERVICE_EXECUTABLE_NAME=${SERVICE_EXECUTABLE_NAME}
-ENV BOP_PATH=/opt/ros/underlay/install/datasets
 
 CMD exec /opt/ros/overlay/install/lib/${SERVICE_PACKAGE}/${SERVICE_EXECUTABLE_NAME} \
     --ros-args -p dataset_name:=${DATASET_NAME}

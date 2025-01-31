@@ -49,7 +49,6 @@ FROM base
 ARG DATASET_NAME
 ARG SERVICE_PACKAGE=ibpc_tester
 ARG SERVICE_EXECUTABLE_NAME=ibpc_tester
-ARG SERVICE_NAME=/get_pose_estimates
 
 RUN apt update \
     && sudo apt install curl -y \
@@ -74,8 +73,6 @@ ENV DATASET_NAME=${DATASET_NAME}
 ENV SERVICE_PACKAGE=${SERVICE_PACKAGE}
 ENV SERVICE_EXECUTABLE_NAME=${SERVICE_EXECUTABLE_NAME}
 ENV BOP_PATH=/opt/ros/underlay/install/datasets
-ENV SERVICE_NAME=${SERVICE_NAME}
 
 CMD exec /opt/ros/overlay/install/lib/${SERVICE_PACKAGE}/${SERVICE_EXECUTABLE_NAME} \
-    --ros-args -p dataset_name:=${DATASET_NAME} \
-    -p service_name:=${SERVICE_NAME}
+    --ros-args -p dataset_name:=${DATASET_NAME}

@@ -32,8 +32,7 @@ PoseEstimator::PoseEstimator(const rclcpp::NodeOptions & options)
   );
   model_dir_ = std::filesystem::path(std::move(path_str));
 
-  std::string srv_name =
-    this->declare_parameter("service_name", "/get_pose_estimates");
+  std::string srv_name = "/get_pose_estimates";
   RCLCPP_INFO(
       this->get_logger(),
       "Pose estimates can be queried over srv %s.",

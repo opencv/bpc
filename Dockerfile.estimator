@@ -51,7 +51,6 @@ FROM base
 
 ARG SERVICE_PACKAGE=ibpc_pose_estimator
 ARG SERVICE_EXECUTABLE_NAME=ibpc_pose_estimator
-ARG SERVICE_NAME=/get_pose_estimates
 
 RUN apt update \
     && sudo apt install curl -y \
@@ -72,8 +71,6 @@ RUN sed --in-place \
 ENV SERVICE_PACKAGE=${SERVICE_PACKAGE}
 ENV SERVICE_EXECUTABLE_NAME=${SERVICE_EXECUTABLE_NAME}
 ENV MODEL_DIR=/opt/ros/underlay/install/models
-ENV SERVICE_NAME=${SERVICE_NAME}
 
 CMD exec /opt/ros/overlay/install/lib/${SERVICE_PACKAGE}/${SERVICE_EXECUTABLE_NAME} \
-    --ros-args -p model_dir:=${MODEL_DIR} \
-    -p service_name:=${SERVICE_NAME}
+    --ros-args -p model_dir:=${MODEL_DIR}

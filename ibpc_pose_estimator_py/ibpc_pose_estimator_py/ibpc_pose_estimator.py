@@ -89,13 +89,7 @@ class PoseEstimator(Node):
         if self.model_dir == "":
             raise Exception("ROS parameter model_dir not set.")
         self.get_logger().info(f"Model directory set to {self.model_dir}.")
-        srv_name = (
-            self.declare_parameter("service_name", "/get_pose_estimates")
-            .get_parameter_value()
-            .string_value
-        )
-        if srv_name == "":
-            raise Exception("ROS parameter service_name not set.")
+        srv_name = "/get_pose_estimates"
         self.get_logger().info(f"Pose estimates can be queried over srv {srv_name}.")
         self.srv = self.create_service(GetPoseEstimates, srv_name, self.srv_cb)
 

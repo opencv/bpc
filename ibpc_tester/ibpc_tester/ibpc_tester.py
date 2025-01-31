@@ -58,13 +58,21 @@ class DebugPublishers:
             durability=DurabilityPolicy.TRANSIENT_LOCAL,
             reliability=ReliabilityPolicy.RELIABLE,  # or RELIABLE, depending on your needs
         )
-        self.rgb_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/rgb", qos_profile)
-        self.depth_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/depth", qos_profile)
+        self.rgb_pub = node.create_publisher(
+            Image, f"/debug/tester/{camera_name}/rgb", qos_profile
+        )
+        self.depth_pub = node.create_publisher(
+            Image, f"/debug/tester/{camera_name}/depth", qos_profile
+        )
         self.aolp_pub = None
         self.dolp_pub = None
         if camera_name != "photoneo":
-            self.aolp_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/aolp", qos_profile)
-            self.dolp_pub = node.create_publisher(Image, f"/debug/tester/{camera_name}/dolp", qos_profile)
+            self.aolp_pub = node.create_publisher(
+                Image, f"/debug/tester/{camera_name}/aolp", qos_profile
+            )
+            self.dolp_pub = node.create_publisher(
+                Image, f"/debug/tester/{camera_name}/dolp", qos_profile
+            )
 
     def publish(self, rgb: Image, depth: Image, aolp: Image = None, dolp: Image = None):
         self.rgb_pub.publish(rgb)
@@ -73,6 +81,7 @@ class DebugPublishers:
             self.aolp_pub.publish(aolp)
         if dolp is not None and self.dolp_pub is not None:
             self.dolp_pub.publish(dolp)
+
 
 class BOPCamera:
     def __init__(self, path, camera_name, img_id):
@@ -94,7 +103,7 @@ class BOPCamera:
             self.dolp = None
         self.br = CvBridge()
 
-    def to_camera_msg(self, node, debug_pubs : DebugPublishers) -> CameraMsg:
+    def to_camera_msg(self, node, debug_pubs: DebugPublishers) -> CameraMsg:
         msg = CameraMsg()
         msg.info.header.frame_id = self.camera_name
         # msg.info.header.stamp = node.get_clock().now()
@@ -108,7 +117,7 @@ class BOPCamera:
             debug_pubs.publish(msg.rgb, msg.depth, msg.aolp, msg.dolp)
         return msg
 
-    def to_photoneo_msg(self, node, debug_pubs : DebugPublishers) -> PhotoneoMsg:
+    def to_photoneo_msg(self, node, debug_pubs: DebugPublishers) -> PhotoneoMsg:
         msg = PhotoneoMsg()
         msg.info.header.frame_id = self.camera_name
         # msg.info.header.stamp = node.get_clock().now()
@@ -146,7 +155,9 @@ def main(argv=sys.argv):
     debug_cam_2 = None
     debug_cam_3 = None
     debug_photoneo = None
-    debug : bool = node.declare_parameter("debug", False).get_parameter_value().bool_value
+    debug: bool = (
+        node.declare_parameter("debug", False).get_parameter_value().bool_value
+    )
     if debug:
         debug_cam_1 = DebugPublishers("cam1", node)
         debug_cam_2 = DebugPublishers("cam2", node)
@@ -183,7 +194,9 @@ def main(argv=sys.argv):
             request.cameras.append(
                 BOPCamera(scene_dir, "cam3", img_id).to_camera_msg(node, debug_cam_3)
             )
-            request.photoneo = BOPCamera(scene_dir, 'photoneo', img_id).to_photoneo_msg(node, debug_photoneo)
+            request.photoneo = BOPCamera(scene_dir, "photoneo", img_id).to_photoneo_msg(
+                node, debug_photoneo
+            )
             # todo(Yadunund): Load corresponding rgb, depth and polarized image for this img_id.
             for obj_gt in obj_gts:
                 request.object_ids.append(int(obj_gt["obj_id"]))

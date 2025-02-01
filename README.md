@@ -50,6 +50,7 @@ Participants are expected to modify the estimator code to implement their soluti
 ## Requirements
 
 - [Docker](https://docs.docker.com/)
+- [rocker](https://github.com/osrf/rocker)
 
 > Note: Participants are expected to submit Docker containers, so all development workflows are designed with this in mind.
 
@@ -92,9 +93,9 @@ docker run --init --rm --net host eclipse/zenoh:1.1.1 --no-multicast-scouting
 ```
 
 ### Run the pose estimator
-
+We use [rocker](https://github.com/osrf/rocker) to add GPU support to Docker containers. To install rocker, run `pip install rocker` on the host machine. 
 ```bash
-docker run --network=host ibpc:pose_estimator
+rocker --nvidia --cuda run --network=host ibpc:pose_estimator
 ```
 
 ### Run the tester

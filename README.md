@@ -19,7 +19,7 @@ TODO
 ## Setup
 
 ```bash
-mkdir ~/ws_ibpc/src -p
+mkdir -p ~/ws_ibpc/src
 cd ~/ws_ibpc/src
 git clone https://github.com/Yadunund/bop_toolkit.git -b add_ipd_dataset
 git clone https://github.com/Yadunund/ibpc.git

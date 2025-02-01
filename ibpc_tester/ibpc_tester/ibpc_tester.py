@@ -147,9 +147,15 @@ def main(argv=sys.argv):
     node.get_logger().info(f"Datasets path is set to {datasets_path}.")
 
     # Declare parameters.
-    dataset_name = node.declare_parameter("dataset_name", "ipd").get_parameter_value().string_value
-    split_type = node.declare_parameter("split_type", "val").get_parameter_value().string_value
-    node.get_logger().info(f"Loading from dataset {dataset_name} with split_type {split_type}.")
+    dataset_name = (
+        node.declare_parameter("dataset_name", "ipd").get_parameter_value().string_value
+    )
+    split_type = (
+        node.declare_parameter("split_type", "val").get_parameter_value().string_value
+    )
+    node.get_logger().info(
+        f"Loading from dataset {dataset_name} with split_type {split_type}."
+    )
 
     debug_cam_1 = None
     debug_cam_2 = None

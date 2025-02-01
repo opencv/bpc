@@ -38,4 +38,4 @@ jobs:
           file: Dockerfile.tester
           load: true
           push: true
-          tags: ghcr.io/yadunund/ibpc/estimator-tester:latest
+          tags: ghcr.io/yadunund/bpc/estimator-tester:latest

@@ -68,7 +68,7 @@ def main():
     test_parser.add_argument("--dataset_directory", action="store", default=".")
     test_parser.add_argument("--debug-inside", action="store_true")
     test_parser.add_argument(
-        "--tester-image", default="ghcr.io/yadunund/ibpc/estimator-tester:latest"
+        "--tester-image", default="ghcr.io/yadunund/bpc/estimator-tester:latest"
     )
 
     fetch_parser = sub_parsers.add_parser("fetch")

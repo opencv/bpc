@@ -113,6 +113,7 @@ class PoseEstimator(Node):
         return response
 
     def get_pose_estimates(
+        self,
         object_ids: List[int],
         cam_1: Camera,
         cam_2: Camera,
@@ -121,6 +122,7 @@ class PoseEstimator(Node):
     ) -> List[PoseEstimateMsg]:
 
         pose_estimates = []
+        print(f"Received request to estimates poses for object_ids: {object_ids}")
         """
             Your implementation goes here.
             msg = PoseEstimateMsg()

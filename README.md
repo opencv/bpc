@@ -1,4 +1,4 @@
-# Industrial Bin Picking Challenge (IBPC)
+# Perception Challenge For Bin-Picking
 
 [![build](https://github.com/Yadunund/ibpc/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/Yadunund/ibpc/actions/workflows/build.yaml)
 [![style](https://github.com/Yadunund/ibpc/actions/workflows/style.yaml/badge.svg?branch=main)](https://github.com/Yadunund/ibpc/actions/workflows/style.yaml)

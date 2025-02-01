@@ -147,9 +147,9 @@ def main(argv=sys.argv):
     node.get_logger().info(f"Datasets path is set to {datasets_path}.")
 
     # Declare parameters.
-    node.declare_parameter("dataset_name", "ipd")
-    dataset_name = node.get_parameter("dataset_name").get_parameter_value().string_value
-    node.get_logger().info("Loading from dataset {dataset_name}.")
+    dataset_name = node.declare_parameter("dataset_name", "ipd").get_parameter_value().string_value
+    split_type = node.declare_parameter("split_type", "val").get_parameter_value().string_value
+    node.get_logger().info(f"Loading from dataset {dataset_name} with split_type {split_type}.")
 
     debug_cam_1 = None
     debug_cam_2 = None
@@ -165,7 +165,7 @@ def main(argv=sys.argv):
         debug_photoneo = DebugPublishers("photoneo", node)
 
     # Load the test split.
-    test_split = get_split_params(datasets_path, dataset_name, "test")
+    test_split = get_split_params(datasets_path, dataset_name, split_type)
     node.get_logger().info(f"Parsed test split: {test_split}")
 
     # Create the ROS client to query pose estimates.

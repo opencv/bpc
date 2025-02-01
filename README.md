@@ -5,6 +5,8 @@
 
 For more details on the challenge, [click here](https://bpc.opencv.org/).
 
+![](../media/bpc.gif)
+
 ## Overview
 
 This repository contains the ROS interfaces, sample submission code and evaluation service for the Perception Challenge For Bin-Picking.

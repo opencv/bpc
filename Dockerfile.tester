@@ -37,7 +37,8 @@ ADD ibpc_tester /opt/ros/overlay/src/ibpc_tester
 RUN . /opt/ros/jazzy/setup.sh \
     && . /opt/ros/underlay/install/setup.sh \
     && cd /opt/ros/overlay \
-    && cd src/ && git clone https://github.com/Yadunund/bop_toolkit.git -b yadu/add_val_key src/ && cd ../ \
+    # clone bop_toolkit and pin version to include changes from https://github.com/thodan/bop_toolkit/pull/176.
+    && cd src/ && git clone https://github.com/thodan/bop_toolkit.git && cd bop_toolkit && git checkout 0cb4be14cbde81d9d19d6dfc8a2ae253cc42d411 && cd ../../ \
     # && rosdep install --from-paths src --ignore-src --rosdistro jazzy -yir \
     && colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release \
     --event-handlers=console_direct+ \
@@ -49,7 +50,7 @@ FROM base
 ARG DATASET_NAME
 ARG SERVICE_PACKAGE=ibpc_tester
 ARG SERVICE_EXECUTABLE_NAME=ibpc_tester
-ARG SPLIT_TYPE
+ARG SPLIT_TYPE=val
 
 RUN apt update \
     && sudo apt install curl -y \

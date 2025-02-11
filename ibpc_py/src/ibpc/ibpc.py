@@ -171,8 +171,8 @@ def main():
         "extension_blacklist": {},
         "operating_mode": OPERATIONS_NON_INTERACTIVE,
         "env": [
-            [f"BOP_PATH:/opt/ros/underlay/install/datasets/{args_dict['dataset']}"],
-            [f"DATASET_NAME:{args_dict['dataset']}"],
+            [f"BOP_PATH=/opt/ros/underlay/install/datasets/{args_dict['dataset']}"],
+            [f"DATASET_NAME={args_dict['dataset']}"],
         ],
         "console_output_file": "ibpc_test_output.log",
         "volume": [

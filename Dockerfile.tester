@@ -41,13 +41,6 @@ RUN . /opt/ros/jazzy/setup.sh \
 # result stage: base + copied install folders from the overlay + service setup.
 FROM base
 
-ARG DATASET_NAME
-ARG OUTPUT_DIR=/submission
-ARG OUTPUT_FILENAME=submission.csv
-ARG SERVICE_PACKAGE=ibpc_tester
-ARG SERVICE_EXECUTABLE_NAME=ibpc_tester
-ARG SPLIT_TYPE=val
-
 RUN apt update \
     && sudo apt install curl -y \
     && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
@@ -67,12 +60,13 @@ RUN sed --in-place \
     --expression '$isource "/opt/ros/overlay/install/setup.bash"' \
     /ros_entrypoint.sh
 
-ENV DATASET_NAME=${DATASET_NAME}
-ENV OUTPUT_DIR=${OUTPUT_DIR}
-ENV OUTPUT_FILENAME=${OUTPUT_FILENAME}
-ENV SERVICE_PACKAGE=${SERVICE_PACKAGE}
-ENV SERVICE_EXECUTABLE_NAME=${SERVICE_EXECUTABLE_NAME}
-ENV SPLIT_TYPE=${SPLIT_TYPE}
+
+ENV DATASET_NAME=ipd
+ENV OUTPUT_DIR=/submission
+ENV OUTPUT_FILENAME=submission.csv
+ENV SERVICE_PACKAGE=ibpc_tester
+ENV SERVICE_EXECUTABLE_NAME=ibpc_tester
+ENV SPLIT_TYPE=val
 
 CMD exec /opt/ros/overlay/install/lib/${SERVICE_PACKAGE}/${SERVICE_EXECUTABLE_NAME} \
     --ros-args -p dataset_name:=${DATASET_NAME} -p split_type:=${SPLIT_TYPE} -p output_dir:=${OUTPUT_DIR} -p output_filename:=${OUTPUT_FILENAME}

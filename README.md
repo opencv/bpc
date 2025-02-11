@@ -97,7 +97,7 @@ docker run --init --rm --net host eclipse/zenoh:1.1.1 --no-multicast-scouting
 ### Run the pose estimator
 We use [rocker](https://github.com/osrf/rocker) to add GPU support to Docker containers. To install rocker, run `pip install rocker` on the host machine.
 ```bash
-rocker --nvidia --cuda run --network=host ibpc:pose_estimator
+rocker --nvidia --cuda --network=host ibpc:pose_estimator
 ```
 
 ### Run the tester

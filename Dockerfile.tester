@@ -68,5 +68,7 @@ ENV SERVICE_PACKAGE=ibpc_tester
 ENV SERVICE_EXECUTABLE_NAME=ibpc_tester
 ENV SPLIT_TYPE=val
 
+COPY ibpc_tester/parts_in_search_phase1.json /opt/ros/overlay/install/lib/parts_in_search_phase1.json
+
 CMD exec /opt/ros/overlay/install/lib/${SERVICE_PACKAGE}/${SERVICE_EXECUTABLE_NAME} \
     --ros-args -p dataset_name:=${DATASET_NAME} -p split_type:=${SPLIT_TYPE} -p output_dir:=${OUTPUT_DIR} -p output_filename:=${OUTPUT_FILENAME}

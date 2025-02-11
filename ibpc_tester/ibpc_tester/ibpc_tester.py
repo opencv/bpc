@@ -1,5 +1,6 @@
 # todo(Yadunund): Add copyright.
 
+import json
 import cv2
 from cv_bridge import CvBridge
 import numpy as np
@@ -219,15 +220,22 @@ def main(argv=sys.argv):
     # Create list to store results
     results = []
 
+    parts_in_search_phase1_json_path = (
+        "/opt/ros/overlay/install/lib/parts_in_search_phase1.json"
+    )
+    with open(parts_in_search_phase1_json_path, "r") as f:
+        parts_in_search_phase1 = json.load(f)
+
     # Get pose estimates for every image in every scene.
     for scene_id in test_split["scene_ids"]:
         scene_dir = Path(test_split["split_path"]) / "{scene_id:06d}".format(
             scene_id=scene_id
         )
-        scene_gt = load_scene_gt(
-            test_split["scene_gt_rgb_photoneo_tpath"].format(scene_id=scene_id)
-        )
-        for img_id, obj_gts in scene_gt.items():
+        # scene_gt = load_scene_gt(test_split["scene_gt_rgb_photoneo_tpath"].format(scene_id=scene_id))
+
+        # for img_id, obj_gts in scene_gt.items():
+        for img_id, obj_gts in parts_in_search_phase1[f"{scene_id:06d}"].items():
+            img_id = int(img_id)
             request = GetPoseEstimates.Request()
             request.cameras.append(
                 BOPCamera(scene_dir, "cam1", img_id).to_camera_msg(node, debug_cam_1)
@@ -241,9 +249,10 @@ def main(argv=sys.argv):
             request.photoneo = BOPCamera(scene_dir, "photoneo", img_id).to_photoneo_msg(
                 node, debug_photoneo
             )
+
             # todo(Yadunund): Load corresponding rgb, depth and polarized image for this img_id.
             for obj_gt in obj_gts:
-                request.object_ids.append(int(obj_gt["obj_id"]))
+                request.object_ids.append(int(obj_gt))
             node.get_logger().info(
                 f"Sending request for scene_id {scene_id} img_id {img_id} for objects {request.object_ids}"
             )

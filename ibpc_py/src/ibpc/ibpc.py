@@ -19,6 +19,11 @@ import urllib.request
 from zipfile import ZipFile
 from contextlib import nullcontext
 
+ESTIMATOR_CONTAINER = "bpc_estimator"
+TESTER_CONTAINER = "bpc_tester"
+ZENOH_CONTAINER = "bpc_zenoh"
+DEFAULT_CONTAINER_NAMES = [ESTIMATOR_CONTAINER, ZENOH_CONTAINER, TESTER_CONTAINER]
+
 
 def get_bop_template(modelname):
     return f"https://huggingface.co/datasets/bop-benchmark/datasets/resolve/main/{modelname}/"
@@ -26,6 +31,22 @@ def get_bop_template(modelname):
 
 def get_ipd_template(modelname):
     return f"https://huggingface.co/datasets/bop-benchmark/{modelname}/resolve/main/"
+
+
+def stop_containers(containers=DEFAULT_CONTAINER_NAMES, quiet=False):
+    for container_name in containers:
+        cmd = ["docker", "kill", container_name]
+        if not quiet:
+            print(f"Running cmd {cmd}")
+        r = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if r.returncode != 0 and not quiet:
+            print(
+                f"Failed to stop container {container_name}. "
+                f"{r.stdout}"
+                f"{r.stderr}"
+            )
+        elif not quiet:
+            print(f"Successfully stopped container {container_name}")
 
 
 bop_suffixes = [
@@ -165,7 +186,7 @@ def main():
         return
 
     tester_args = {
-        "name": "bpc_tester",
+        "name": TESTER_CONTAINER,
         "network": "host",
         "extension_blacklist": {},
         "operating_mode": OPERATIONS_NON_INTERACTIVE,
@@ -193,7 +214,7 @@ def main():
         return exit_code
 
     zenoh_args = {
-        "name": "bpc_zenoh",
+        "name": ZENOH_CONTAINER,
         "network": "host",
         "extension_blacklist": {},
         "console_output_file": "ibpc_zenoh_output.log",
@@ -214,6 +235,9 @@ def main():
     def run_instance(dig_instance, args):
         dig_instance.run(**args)
 
+    print("Making sure that containers are not left over from previous runs.    ")
+    stop_containers(quiet=True)
+
     zenoh_thread = threading.Thread(target=run_instance, args=(dig_zenoh, zenoh_args))
     zenoh_thread.start()
 
@@ -222,7 +246,7 @@ def main():
     )
     tester_thread.start()
 
-    args_dict["name"] = "bpc_estimator"
+    args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
     args_dict["cuda"] = True
@@ -253,10 +277,8 @@ def main():
     except KeyboardInterrupt:
         # TODO clean up threads here
 
-        for container_name in ["bpc_estimator", "bpc_zenoh", "bpc_tester"]:
-            cmd = ["docker", "kill", container_name]
-            print(f"Running cmd {cmd}")
-            subprocess.call(cmd)
+        print("Stopping all containers.")
+        stop_containers()
         tester_thread.join()
         zenoh_thread.join()
 

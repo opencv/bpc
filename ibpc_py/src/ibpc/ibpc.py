@@ -167,6 +167,7 @@ def main():
         return
 
     tester_args = {
+        "name": "bpc_tester",
         "network": "host",
         "extension_blacklist": {},
         "operating_mode": OPERATIONS_NON_INTERACTIVE,
@@ -194,6 +195,7 @@ def main():
         return exit_code
 
     zenoh_args = {
+        "name": "bpc_zenoh",
         "network": "host",
         "extension_blacklist": {},
         "console_output_file": "ibpc_zenoh_output.log",
@@ -214,14 +216,15 @@ def main():
     def run_instance(dig_instance, args):
         dig_instance.run(**args)
 
-    tester_thread = threading.Thread(target=run_instance, args=(dig_zenoh, zenoh_args))
-    tester_thread.start()
+    zenoh_thread = threading.Thread(target=run_instance, args=(dig_zenoh, zenoh_args))
+    zenoh_thread.start()
 
     tester_thread = threading.Thread(
         target=run_instance, args=(dig_tester, tester_args)
     )
     tester_thread.start()
 
+    args_dict["name"] = "bpc_estimator"
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
 
@@ -244,6 +247,18 @@ def main():
         args_dict["command"] = "/bin/bash"
         args_dict["mode"] = OPERATIONS_INTERACTIVE
 
-    result = dig.run(**args_dict)
-    # TODO clean up threads here
-    return result
+    try:
+        result = dig.run(**args_dict)
+        return result
+
+    except KeyboardInterrupt:
+        # TODO clean up threads here
+
+        for container_name in ["bpc_estimator", "bpc_zenoh", "bpc_tester"]:
+            cmd = ["docker", "kill", container_name]
+            print(f"Running cmd {cmd}")
+            subprocess.call(cmd)
+        tester_thread.join()
+        zenoh_thread.join()
+
+    return -1

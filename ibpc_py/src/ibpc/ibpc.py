@@ -155,8 +155,6 @@ def main():
     fetch_parser.add_argument("--dataset-path", default=".")
 
     extension_manager = RockerExtensionManager()
-    default_args = {"cuda": True, "network": "host"}
-    # extension_manager.extend_cli_parser(test_parser, default_args)
 
     args = main_parser.parse_args()
     args_dict = vars(args)
@@ -227,6 +225,7 @@ def main():
     args_dict["name"] = "bpc_estimator"
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
+    args_dict["cuda"] = True
 
     # Confirm dataset directory is absolute
     args_dict["dataset_directory"] = os.path.abspath(args_dict["dataset_directory"])

@@ -46,18 +46,23 @@ lm_files = {
     "lm_train_pbr.zip": "b7814cc0cd8b6f0d9dddff7b3ded2a189eacfd2c19fa10b3e332f022930551a9",
 }
 
-ipd_files = {
+ipd_core = {
     "ipd_base.zip": "c4943d90040df0737ac617c30a9b4e451a7fc94d96c03406376ce34e5a9724d1",
     "ipd_models.zip": "e7435057b48c66faf3a10353a7ae0bffd63ec6351a422d2c97d4ca4b7e6b797a",
-    "ipd_test_all.zip": "e1b042f046d7d07f8c8811f7739fb68a25ad8958d1b58c5cbc925f98096eb6f9",
-    "ipd_train_pbr.zip": "6afde1861ce781adc33fcdb3c91335fa39c5e7208a0b20433deb21f92f3e9a94",
     "ipd_val.zip": "50df37c370557a3cccc11b2e6d5f37f13783159ed29f4886e09c9703c1cad8de",
-    "ipd_test_all.z01": "25ce71feb7d9811db51772e44ebc981d57d9f10c91776707955ab1e616346cb3",
 }
 
+ipd_files = {
+    "ipd_test_all.zip": "e1b042f046d7d07f8c8811f7739fb68a25ad8958d1b58c5cbc925f98096eb6f9",
+    "ipd_train_pbr.zip": "6afde1861ce781adc33fcdb3c91335fa39c5e7208a0b20433deb21f92f3e9a94",
+    "ipd_test_all.z01": "25ce71feb7d9811db51772e44ebc981d57d9f10c91776707955ab1e616346cb3",
+}
+ipd_files.update(ipd_core)
+
 available_datasets = {
-    "ipd": (get_ipd_template("ipd"), ipd_files),
-    "lm": (get_bop_template("lm"), lm_files),
+    "ipd_all": (get_ipd_template("ipd"), ipd_files),
+    "ipd": (get_ipd_template("ipd"), ipd_core),
+    # "lm": (get_bop_template("lm"), lm_files), #LM doesn't work for bpc so disabling
 }
 
 
@@ -142,7 +147,7 @@ def main():
     test_parser = sub_parsers.add_parser("test")
 
     test_parser.add_argument("estimator_image")
-    test_parser.add_argument("dataset")
+    test_parser.add_argument("dataset", choices=available_datasets.keys())
     test_parser.add_argument("--dataset_directory", action="store", default=".")
     test_parser.add_argument("--result_directory", action="store", default=".")
     test_parser.add_argument("--debug-inside", action="store_true")

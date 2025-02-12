@@ -1,6 +1,5 @@
-name: build
+name: build_packages
 on:
-  pull_request:
   push:
     branches: [ main ]
 defaults:
@@ -30,7 +29,8 @@ jobs:
         with:
           file: Dockerfile.estimator
           load: true
-          tags: ${{ env.TEST_TAG }}
+          push: true
+          tags: ghcr.io/opencv/bpc/estimator-example:latest
       -
         name: Build tester
         uses: docker/build-push-action@v6

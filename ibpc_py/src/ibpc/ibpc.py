@@ -101,6 +101,9 @@ def sha256_file(filename):
 
 def fetch_dataset(dataset, output_path):
     (url_base, files) = available_datasets[dataset]
+    # Before we do anything make sure the directory exists
+    dataset_dir = os.path.join(output_path, dataset)
+    os.makedirs(dataset_dir, exist_ok=True)
     fetched_files = []
     for suffix in files.keys():
 
@@ -149,7 +152,11 @@ def fetch_dataset(dataset, output_path):
 
     for filename in fetched_files:
         print(f"Unzipping {filename}")
-        subprocess.check_call(["7z", "x", "-y", filename, f"-o{output_path}"])
+        extraction_path = dataset_dir
+        # BOP Specialization
+        if filename.endswith("base.zip"):
+            extraction_path = output_path
+        subprocess.check_call(["7z", "x", "-y", filename, f"-o{extraction_path}"])
         # with ZipFile(filename) as zfile:
         #    zfile.extractall(output_path)
 
@@ -185,8 +192,10 @@ def main():
     args = main_parser.parse_args()
     args_dict = vars(args)
     if args.subparser_name == "fetch":
-        print(f"Fetching dataset {args_dict['dataset']} to {args_dict['dataset_path']}")
-        fetch_dataset(args_dict["dataset"], args_dict["dataset_path"])
+        dataset_name = args_dict["dataset"]
+        dataset_directory = args_dict["dataset_path"]
+        print(f"Fetching dataset {dataset_name} to {dataset_directory}")
+        fetch_dataset(dataset_name, dataset_directory)
         print("Fetch complete")
         return
 
@@ -196,7 +205,7 @@ def main():
         "extension_blacklist": {},
         "operating_mode": OPERATIONS_NON_INTERACTIVE,
         "env": [
-            [f"BOP_PATH=/opt/ros/underlay/install/datasets/{args_dict['dataset']}"],
+            [f"BOP_PATH=/opt/ros/underlay/install/datasets/"],
             [f"DATASET_NAME={args_dict['dataset']}"],
         ],
         "console_output_file": "ibpc_test_output.log",

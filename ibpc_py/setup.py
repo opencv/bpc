@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ibpc",
-    version="0.0.2",
+    version="0.0.3",
     packages=["ibpc"],
     package_dir={"": "src"},
     # package_data={'ibpc': ['templates/*.em']},
@@ -22,7 +22,7 @@ setuptools.setup(
     license="Apache 2.0",
     install_requires=[
         "empy",
-        "rocker>=0.2.13",
+        "rocker>=0.2.18",
     ],
     install_package_data=True,
     zip_safe=False,

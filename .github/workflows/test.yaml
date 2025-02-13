@@ -1,5 +1,5 @@
 name: Basic CI
-on: [push, pull_request]
+on: [push]
 
 jobs:
   basic_ci:

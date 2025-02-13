@@ -1,10 +1,9 @@
-name: test
+name: Basic CI
 on: [push, pull_request]
-defaults:
-  run:
-    shell: bash
+
 jobs:
-  build:
+  basic_ci:
+    name: Basic CI
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -44,7 +43,7 @@ jobs:
         name: Run bpc fetch
         run: | 
           bpc fetch ipd
-     -
+      -
        name: Run bpc test
        run: |
          bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest ; cat submissions.csv

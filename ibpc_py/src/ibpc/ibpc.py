@@ -3,6 +3,7 @@ import hashlib
 import os
 import shlex
 import shutil
+import signal
 import threading
 import subprocess
 
@@ -250,19 +251,8 @@ def main():
         print("Build of zenoh failed exiting")
         return exit_code
 
-    def run_instance(dig_instance, args):
-        dig_instance.run(**args)
-
     print("Making sure that containers are not left over from previous runs.    ")
     stop_containers(quiet=True)
-
-    zenoh_thread = threading.Thread(target=run_instance, args=(dig_zenoh, zenoh_args))
-    zenoh_thread.start()
-
-    tester_thread = threading.Thread(
-        target=run_instance, args=(dig_tester, tester_args)
-    )
-    tester_thread.start()
 
     args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
@@ -288,8 +278,28 @@ def main():
         args_dict["command"] = "/bin/bash"
         args_dict["mode"] = OPERATIONS_INTERACTIVE
 
+    def run_instance(dig_instance, args, other_instances):
+        result = dig_instance.run(**args)
+        name = args["name"]
+        print(f"{ name } finished with exit code {result} -- stopping others.")
+        stop_containers(other_instances, quiet=True)
+
+    zenoh_thread = threading.Thread(
+        target=run_instance,
+        args=(dig_zenoh, zenoh_args, [TESTER_CONTAINER, ESTIMATOR_CONTAINER]),
+    )
+    zenoh_thread.start()
+
+    tester_thread = threading.Thread(
+        target=run_instance,
+        args=(dig_tester, tester_args, [ZENOH_CONTAINER, ESTIMATOR_CONTAINER]),
+    )
+    tester_thread.start()
+
     try:
         result = dig.run(**args_dict)
+        print(f"Estimator finished with exit code {result}")
+        stop_containers(quiet=True)
         return result
 
     except KeyboardInterrupt:

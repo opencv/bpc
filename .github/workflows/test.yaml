@@ -30,14 +30,14 @@ jobs:
         with:
           file: Dockerfile.estimator
           load: true
-          tags: ${{ env.TEST_TAG }}
+          tags: pose_estimator:latest
       -
         name: Build tester
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile.tester
           load: true
-          tags: ghcr.io/opencv/bpc/estimator-tester:latest
+          tags: estimator-tester:latest
       -
         name: Build ibpc_py
         run: |
@@ -47,11 +47,10 @@ jobs:
         name: Run bpc fetch
         run: | 
           bpc fetch ipd
-# TODO make a bpc test return on success
-#      -
-#        name: Run bpc test
-#        run: | 
-#          bpc fetch ipd
-
+     -
+       name: Run bpc test
+       run: |
+         bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest ; cat submissions.csv
+#TODO(tfoote) Also add tests for public images
 
 

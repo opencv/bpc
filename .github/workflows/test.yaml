@@ -8,6 +8,18 @@ jobs:
     timeout-minutes: 30
     steps:
       -
+        name: Remove unused content for disk space
+        shell: bash
+        run: |
+            df -h
+            sudo rm -rf /usr/share/dotnet
+            sudo rm -rf /usr/local/lib/android
+            sudo rm -rf /opt/ghc
+            sudo rm -rf /opt/hostedtoolcache/CodeQL
+            sudo docker image prune --all --force
+            sudo docker builder prune -a
+            df -h
+      -
         name: Checkout
         uses: actions/checkout@v4
       -
@@ -39,14 +51,15 @@ jobs:
         run: |
           cd ibpc_py
           python -m pip install -e .
-      - name: Install 7zip
+      - name: Check space
         run: |
-          sudo apt-get update
-          sudo apt-get install -y 7zip
+          df -h
+          docker images
       -
         name: Run bpc fetch
         run: | 
           bpc fetch ipd  --remove-zip-after-extract
+          df -h
       -
        name: Run bpc test
        run: |

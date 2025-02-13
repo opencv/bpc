@@ -257,7 +257,7 @@ def main(argv=sys.argv):
                     R, t = pose_msg_to_rt(pose_estimate.pose)
                     results.append(
                         {
-                            "scene_id": scene_id,
+                            "scene_id": f"{scene_id:06d}",
                             "im_id": img_id,
                             "obj_id": pose_estimate.obj_id,
                             "score": pose_estimate.score,

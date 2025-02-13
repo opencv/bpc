@@ -96,11 +96,22 @@ bpc fetch ipd
 
 ## Run the test
 
-**At the moment the published tester is not available. You will have to build it locally see below in Development to build `ibpc:tester` and pass --tester-image `ibpc:tester`
+The test will validate your provide image against the test dataset.
+When you build a new image you rerun this test.
+
+**At the moment the published tester is not available. You will have to build it locally see below in Development to build `ibpc:tester` and pass `--tester-image ibpc:tester` as additional arguments. THe default is `ghcr.io/opencv/bpc/estimator-tester:latest` but that's currently unavailable.
 
 ```
-bpc test  ipd
+bpc test <POSE_ESTIMATOR_DOCKER_TAG> ipd
 ```
+
+For example:
+
+```
+bpc test ghcr.io/opencv/bpc/estimator-example:latest ipd
+```
+**Substitute your own estimator image for ghcr.io/opencv/bpc/estimator-example:latest it's not currently available.**
+If you follow the development build below the argument is `ibpc:pose_estimator`.
 
 The console output will show the system getting started and then the output of the estimator. 
 
@@ -124,7 +135,7 @@ mkdir -p ~/ws_bpc/src
 cd ~/ws_bpc/src
 git clone https://github.com/opencv/bpc.git
 ```
-
+ibpc:pose_estimator
 
 ### Build the ibpc_pose_estimator
 

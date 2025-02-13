@@ -227,7 +227,7 @@ def main(argv=sys.argv):
         scene_gt = load_scene_gt(
             test_split["scene_gt_rgb_photoneo_tpath"].format(scene_id=scene_id)
         )
-        
+
         for img_id, obj_gts in list(scene_gt.items())[::-1]:
             request = GetPoseEstimates.Request()
             request.cameras.append(
@@ -245,6 +245,9 @@ def main(argv=sys.argv):
             # todo(Yadunund): Load corresponding rgb, depth and polarized image for this img_id.
             for obj_gt in obj_gts:
                 request.object_ids.append(int(obj_gt["obj_id"]))
+
+            request.object_ids = list(set(request.object_ids))
+
             node.get_logger().info(
                 f"Sending request for scene_id {scene_id} img_id {img_id} for objects {request.object_ids}"
             )

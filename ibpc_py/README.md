@@ -2,28 +2,26 @@
 
 This is the python entrypoint for the Bin Picking Challenge
 
-## Usage
-
-Get a dataset
-`bpc fetch lm`
-
-
-Run tests against a dataset
-`bpc test <Pose Estimator Image Name> <datasetname> `
-
-`bpc test ibpc:pose_estimator lm`
+For example usage see the README at the root of this repository.
 
 
 ## Prerequisites
 
+- [Docker](https://docs.docker.com/)
+ * Docker installed with their user in docker group for passwordless invocations.
+- 7z -- `apt install 7zip`
+- Python3 with virtualenv  -- `apt install python3-virtualenv`
+
 
 ### Install the package:
 
-In a virtualenv
+In a virtualenv:
+
 `pip install ibpc`
 
-Temporary before rocker release of https://github.com/osrf/rocker/pull/317/
-`pip uninstall rocker && pip install git+http://github.com/osrf/rocker.git@console_to_file`
+Or to develop clone this and run: 
+
+`pip install -e .`
 
 
 ### Nvidia Docker (optoinal)

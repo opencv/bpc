@@ -74,7 +74,7 @@ jobs:
        run: |
           cat ibpc_test_output.log
           cat ibpc_zenoh_output.log
-          cat submissions.csv
+          cat submission.csv
 
 #TODO(tfoote) Also add tests for public images
 

@@ -184,13 +184,16 @@ def main():
     sub_parsers = main_parser.add_subparsers(title="test", dest="subparser_name")
     test_parser = sub_parsers.add_parser("test")
 
-    test_parser.add_argument("estimator_image")
+    test_parser.add_argument(
+        "estimator_image",
+        help="For example ghcr.io/opencv/bpc/bpc_pose_estimator:example or your own build",
+    )
     test_parser.add_argument("dataset", choices=available_datasets.keys())
     test_parser.add_argument("--dataset_directory", action="store", default=".")
     test_parser.add_argument("--result_directory", action="store", default=".")
     test_parser.add_argument("--debug-inside", action="store_true")
     test_parser.add_argument(
-        "--tester-image", default="ghcr.io/opencv/bpc/estimator-tester:latest"
+        "--tester-image", default="ghcr.io/opencv/bpc/bpc_tester:latest"
     )
 
     fetch_parser = sub_parsers.add_parser("fetch")

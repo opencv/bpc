@@ -86,6 +86,9 @@ source ~/bpc_ws/bpc_env/bin/activate
 **For any new shell interacting with the `bpc` command you will have to rerun this source command.**
 
 #### Install bpc 
+
+Install the bpc command from the ibpc pypi package. (bpc was already taken :-( )
+
 ```
 pip install ibpc
 ```
@@ -105,8 +108,8 @@ The test will validate your provided image against the test dataset.
 When you build a new image you rerun this test.
 
 **At the moment the published tester is not available.
-You will have to build it locally see below in Development to build `ibpc:tester` and pass `--tester-image ibpc:tester` as additional arguments.
-The default is `ghcr.io/opencv/bpc/estimator-tester:latest` but that's currently unavailable.
+You will have to build it locally see below in Development to build `bpc_tester:latest` and pass `--tester-image bpc_tester:latest` as additional arguments.
+The default is `ghcr.io/opencv/bpc/bpc_tester:latest` but that's currently unavailable.
 
 ```
 bpc test <POSE_ESTIMATOR_DOCKER_TAG> ipd
@@ -115,10 +118,10 @@ bpc test <POSE_ESTIMATOR_DOCKER_TAG> ipd
 For example:
 
 ```
-bpc test ghcr.io/opencv/bpc/estimator-example:latest ipd
+bpc test ghcr.io/opencv/bpc/bpc_pose_estimator:example ipd
 ```
-**Substitute your own estimator image for ghcr.io/opencv/bpc/estimator-example:latest it's not currently available.**
-If you follow the development build below the argument is `ibpc:pose_estimator`.
+**Substitute your own estimator image for ghcr.io/opencv/bpc/bpc_pose_estimator:example it's not currently available.**
+If you follow the development build below the argument is `bpc_pose_estimator:example`.
 
 The console output will show the system getting started and then the output of the estimator. 
 
@@ -196,12 +199,12 @@ The above is enough to get you going.
 However we want to be open about what else were doing.
 You can see the source of the tester and build your own version as follows if you'd like. 
 
-### Build the ibpc_tester
+### Build the bpc_tester image
 
 If you want to reproduce the tester image run the following command
 
 
-This is packaged and built via a github action to `ghcr.io/opencv/bpc/estimator-tester:latest` however this is how to reproduce it. 
+This is packaged and built via a github action to `ghcr.io/opencv/bpc/bpc_tester:latest` however this is how to reproduce it. 
 
 ```bash
 cd ~/ws_bpc/src/bpc
@@ -236,7 +239,7 @@ docker run --init --rm --net host eclipse/zenoh:1.2.1 --no-multicast-scouting
 ### Run the pose estimator
 We use [rocker](https://github.com/osrf/rocker) to add GPU support to Docker containers. To install rocker, run `pip install rocker` on the host machine.
 ```bash
-rocker --nvidia --cuda --network=host ibpc:pose_estimator
+rocker --nvidia --cuda --network=host bpc_pose_estimator:example
 ```
 
 ### Run the tester
@@ -244,6 +247,6 @@ rocker --nvidia --cuda --network=host ibpc:pose_estimator
 > Note: Substitute the <PATH_TO_DATASET> with the directory that contains the [ipd](https://huggingface.co/datasets/bop-benchmark/ipd/tree/main) dataset. Similarly, substitute <PATH_TO_OUTPUT_DIR> with the directory that should contain the results from the pose estimator. By default, the results will be saved as a `submission.csv` file but this filename can be updated by setting the `OUTPUT_FILENAME` environment variable.
 
 ```bash
-docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -e SPLIT_TYPE=val -v<PATH_TO_DATASET>:/opt/ros/underlay/install/datasets -v<PATH_TO_OUTPUT_DIR>:/submission -it ibpc:tester
+docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -e SPLIT_TYPE=val -v<PATH_TO_DATASET>:/opt/ros/underlay/install/datasets -v<PATH_TO_OUTPUT_DIR>:/submission -it bpc_tester:latest
 ```
 

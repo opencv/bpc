@@ -30,7 +30,7 @@ jobs:
           file: Dockerfile.estimator
           load: true
           push: true
-          tags: ghcr.io/opencv/bpc/estimator-example:latest
+          tags: ghcr.io/opencv/bpc/bpc_pose_estimator:example
       -
         name: Build tester
         uses: docker/build-push-action@v6
@@ -38,4 +38,4 @@ jobs:
           file: Dockerfile.tester
           load: true
           push: true
-          tags: ghcr.io/opencv/bpc/estimator-tester:latest
+          tags: ghcr.io/opencv/bpc/bpc_tester:latest

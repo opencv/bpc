@@ -64,12 +64,12 @@ Participants are expected to modify the estimator code to implement their soluti
 
 This section will guide you through validating your image.
 
-1. Setup a workspace
+#### Setup a workspace
 ```
 mkdir -p ~/bpc_ws
 ```
 
-1. Create a virtual environment 
+#### Create a virtual environment 
 
 📄 If you're already working in some form of virtualenv you can continue to use that and install `bpc` in that instead of making a new one. 
 
@@ -77,7 +77,7 @@ mkdir -p ~/bpc_ws
 python3 -m venv ~/bpc_ws/bpc_env
 ```
 
-1. Activate that virtual env
+#### Activate that virtual env
 
 ```
 source ~/bpc_ws/bpc_env/bin/activate
@@ -85,7 +85,7 @@ source ~/bpc_ws/bpc_env/bin/activate
 
 **For any new shell interacting with the `bpc` command you will have to rerun this source command.**
 
-1. Install bpc 
+#### Install bpc 
 ```
 pip install ibpc
 ```

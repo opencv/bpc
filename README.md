@@ -71,6 +71,7 @@ mkdir -p ~/bpc_ws
 
 1. Create a virtual environment 
 
+📄 If you're already working in some form of virtualenv you can continue to use that and install `bpc` in that instead of making a new one. 
 
 ```
 python3 -m venv ~/bpc_ws/bpc_env
@@ -100,10 +101,12 @@ bpc fetch ipd
 
 ### Run the test
 
-The test will validate your provide image against the test dataset.
+The test will validate your provided image against the test dataset.
 When you build a new image you rerun this test.
 
-**At the moment the published tester is not available. You will have to build it locally see below in Development to build `ibpc:tester` and pass `--tester-image ibpc:tester` as additional arguments. THe default is `ghcr.io/opencv/bpc/estimator-tester:latest` but that's currently unavailable.
+**At the moment the published tester is not available.
+You will have to build it locally see below in Development to build `ibpc:tester` and pass `--tester-image ibpc:tester` as additional arguments.
+The default is `ghcr.io/opencv/bpc/estimator-tester:latest` but that's currently unavailable.
 
 ```
 bpc test <POSE_ESTIMATOR_DOCKER_TAG> ipd

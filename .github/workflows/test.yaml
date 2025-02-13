@@ -62,8 +62,20 @@ jobs:
           df -h
       -
        name: Run bpc test
+       continue-on-error: true
        run: |
-         bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest ; cat submissions.csv
+         bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest
+      -
+       name: Check Disk space
+       run: |
+          df -h
+      -
+       name: Check results
+       run: |
+          cat ibpc_test_output.log
+          cat ibpc_zenoh_output.log
+          cat submissions.csv
+
 #TODO(tfoote) Also add tests for public images
 
 

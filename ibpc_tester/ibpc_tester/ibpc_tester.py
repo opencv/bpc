@@ -227,7 +227,7 @@ def main(argv=sys.argv):
         scene_gt = load_scene_gt(
             test_split["scene_gt_rgb_photoneo_tpath"].format(scene_id=scene_id)
         )
-        # for img_id, obj_gts in scene_gt.items():
+        
         for img_id, obj_gts in list(scene_gt.items())[::-1]:
             request = GetPoseEstimates.Request()
             request.cameras.append(

@@ -49,7 +49,10 @@ To simplify the evaluation process, Dockerfiles are provided to generate contain
 
 Participants are expected to modify the estimator code to implement their solution. Once completed, your custom estimator should be containerized using Docker and submitted according to the challenge requirements. More detailed submission instructions will be provided soon.
 
-## Requirements
+
+## Validation Setup
+
+### Requirements
 
 - [Docker](https://docs.docker.com/)
  * Docker installed with their user in docker group for passwordless invocations.
@@ -58,7 +61,8 @@ Participants are expected to modify the estimator code to implement their soluti
 
 > Note: Participants are expected to submit Docker containers, so all development workflows are designed with this in mind.
 
-## Setup
+
+This section will guide you through validating your image.
 
 1. Setup a workspace
 ```
@@ -87,14 +91,14 @@ pip install ibpc
 
 
 
-## Fetch the dataset
+### Fetch the dataset
 
 ```
 cd ~/bpc_ws
 bpc fetch ipd
 ```
 
-## Run the test
+### Run the test
 
 The test will validate your provide image against the test dataset.
 When you build a new image you rerun this test.
@@ -126,7 +130,10 @@ tail -f ibpc_test_output.log
 The results will come out as `submission.csv` when the tester is complete.
 
 
-## Development
+## Pose Estimator Development
+
+Above you've learned how to validate a system. 
+It's time to learn how to create your own Pose Estimator.
 
 ### Fetch the source repository
 
@@ -135,7 +142,6 @@ mkdir -p ~/ws_bpc/src
 cd ~/ws_bpc/src
 git clone https://github.com/opencv/bpc.git
 ```
-ibpc:pose_estimator
 
 ### Build the ibpc_pose_estimator
 
@@ -143,28 +149,50 @@ We will use the following example pose estimator for the demo.
 
 ```bash
 cd ~/ws_bpc/src/bpc
-docker buildx build -t ibpc:pose_estimator \
+docker buildx build -t bpc_pose_estimator:example \
     --file ./Dockerfile.estimator \
     --build-arg="MODEL_DIR=models" \
     .
 ```
 
-If you want to reproduce the tester image run the following command
+If you use this tag the `bpc` invocation will be as follows where you use the image you just built:
+
+`bpc test bpc_pose_estimator:example ipd`
+
+
+👷 At this point it is up to you to fork and fill in the implementation of the pose estimator. 👷
+
+
+### Baseline Solution
+
+We provide a simple baseline solution as a reference for implementing the solution in `ibpc_pose_estimator_py`. Please refer to the [baseline_solution](https://github.com/opencv/bpc/tree/baseline_solution) branch and follow the instructions there.
+
+
+## Further Details
+
+The above is enough to get you going.
+However we want to be open about what else were doing.
+You can see the source of the tester and build your own version as follows if you'd like. 
 
 ### Build the ibpc_tester
 
+If you want to reproduce the tester image run the following command
+
+
+This is packaged and built via a github action to `ghcr.io/opencv/bpc/estimator-tester:latest` however this is how to reproduce it. 
+
 ```bash
 cd ~/ws_bpc/src/bpc
-docker buildx build -t ibpc:tester \
+docker buildx build -t bpc_tester:latest \
     --file ./Dockerfile.tester \
     .
 ```
 
-And then when you invoke `bpc test` append the argument `--tester-image ibpc:tester` to use your local build.
+And then when you invoke `bpc test` append the argument `--tester-image bpc_tester:latest` to use your local build.
 
 ### If you would like the training data
 
-Use the command
+Use the command:
 ```
 bpc fetch ipd_all
 ```
@@ -172,6 +200,9 @@ bpc fetch ipd_all
 
 ### Manually Run components 
 
+It is possible to manually run the components.
+`bpc` shows what it is running on the console output.
+Or you can run as outlined below. 
 
 
 ### Start the Zenoh router
@@ -194,10 +225,3 @@ rocker --nvidia --cuda --network=host ibpc:pose_estimator
 docker run --network=host -e BOP_PATH=/opt/ros/underlay/install/datasets -e SPLIT_TYPE=val -v<PATH_TO_DATASET>:/opt/ros/underlay/install/datasets -v<PATH_TO_OUTPUT_DIR>:/submission -it ibpc:tester
 ```
 
-## Baseline Solution
-
-We provide a simple baseline solution as a reference for implementing the solution in `ibpc_pose_estimator_py`. Please refer to the [baseline_solution](https://github.com/opencv/bpc/tree/baseline_solution) branch and follow the instructions there.
-
-## Next Steps
-
-Stay tuned – more detailed submission instructions and guidelines will be provided soon.

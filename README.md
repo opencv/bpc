@@ -162,6 +162,25 @@ If you use this tag the `bpc` invocation will be as follows where you use the im
 
 👷 At this point it is up to you to fork and fill in the implementation of the pose estimator. 👷
 
+### Tips
+
+🐌 **If you are iterating a lot of times with the validation and are frustrated by how long the cuda installation is, you can add it to your Dockerfile as below.**
+It will make the image significantly larger, but faster to iterate if you put it higher in the dockerfile. We can't include it in the published image because the image gets too big for hosting and pulling easily.
+
+```
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget software-properties-common gnupg2 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN \
+  wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
+  dpkg -i cuda-keyring_1.1-1_all.deb && \
+  rm cuda-keyring_1.1-1_all.deb && \
+  \
+  apt-get update && \
+  apt-get -y install cuda-toolkit && \
+  rm -rf /var/lib/apt/lists/*
+```
 
 ### Baseline Solution
 

@@ -46,7 +46,7 @@ jobs:
       -
         name: Run bpc fetch
         run: | 
-          bpc fetch ipd
+          bpc fetch ipd  --remove-zip-after-extract
       -
        name: Run bpc test
        run: |

@@ -1,6 +1,7 @@
 import argparse
 import hashlib
 import os
+import pathlib
 import shlex
 import shutil
 import signal
@@ -103,7 +104,7 @@ def sha256_file(filename):
     return sha256.hexdigest()
 
 
-def fetch_dataset(dataset, output_path):
+def fetch_dataset(dataset, output_path, remove_zip_after_extract):
     (url_base, files) = available_datasets[dataset]
     # Before we do anything make sure the directory exists
     dataset_dir = os.path.join(output_path, dataset)
@@ -165,6 +166,10 @@ def fetch_dataset(dataset, output_path):
         # with ZipFile(filename) as zfile:
         #    zfile.extractall(output_path)
 
+    if remove_zip_after_extract:
+        for filename in fetched_files:
+            pathlib.Path(filename).unlink(missing_ok=True)
+
 
 def main():
 
@@ -191,6 +196,12 @@ def main():
     fetch_parser = sub_parsers.add_parser("fetch")
     fetch_parser.add_argument("dataset", choices=available_datasets.keys())
     fetch_parser.add_argument("--dataset-path", default=".")
+    fetch_parser.add_argument(
+        "--remove-zip-after-extract",
+        default=False,
+        action="store_true",
+        help="Remove the zip files after extracting to save disk space.",
+    )
 
     extension_manager = RockerExtensionManager()
 
@@ -200,7 +211,9 @@ def main():
         dataset_name = args_dict["dataset"]
         dataset_directory = args_dict["dataset_path"]
         print(f"Fetching dataset {dataset_name} to {dataset_directory}")
-        fetch_dataset(dataset_name, dataset_directory)
+        fetch_dataset(
+            dataset_name, dataset_directory, args_dict["remove_zip_after_extract"]
+        )
         print("Fetch complete")
         return
 

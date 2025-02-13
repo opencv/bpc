@@ -52,12 +52,72 @@ Participants are expected to modify the estimator code to implement their soluti
 ## Requirements
 
 - [Docker](https://docs.docker.com/)
-- [rocker](https://github.com/osrf/rocker)
+ * Docker installed with their user in docker group for passwordless invocations.
+- 7z -- `apt install 7zip`
+- Python3 with virtualenv  -- `apt install python3-virtualenv`
 
 > Note: Participants are expected to submit Docker containers, so all development workflows are designed with this in mind.
 
 ## Setup
 
+1. Setup a workspace
+```
+mkdir -p ~/bpc_ws
+```
+
+1. Create a virtual environment 
+
+
+```
+python3 -m venv ~/bpc_ws/bpc_env
+```
+
+1. Activate that virtual env
+
+```
+source ~/bpc_ws/bpc_env/bin/activate
+```
+
+**For any new shell interacting with the `bpc` command you will have to rerun this source command.**
+
+1. Install bpc 
+```
+pip install ibpc
+```
+
+
+
+## Fetch the dataset
+
+```
+cd ~/bpc_ws
+bpc fetch ipd
+```
+
+## Run the test
+
+**At the moment the published tester is not available. You will have to build it locally see below in Development to build `ibpc:tester` and pass --tester-image `ibpc:tester`
+
+```
+bpc test  ipd
+```
+
+The console output will show the system getting started and then the output of the estimator. 
+
+If you would like to interact with the estimator and run alternative commands or anything else in the container you can invoke it with `--debug`
+
+The tester console output will be streamed to the file `ibpc_test_output.log` Use this to see it
+
+```
+tail -f ibpc_test_output.log
+```
+
+The results will come out as `submission.csv` when the tester is complete.
+
+
+## Development
+
+### Fetch the source repository
 
 ```bash
 mkdir -p ~/ws_bpc/src
@@ -65,9 +125,10 @@ cd ~/ws_bpc/src
 git clone https://github.com/opencv/bpc.git
 ```
 
-## Build
 
 ### Build the ibpc_pose_estimator
+
+We will use the following example pose estimator for the demo. 
 
 ```bash
 cd ~/ws_bpc/src/bpc
@@ -76,6 +137,8 @@ docker buildx build -t ibpc:pose_estimator \
     --build-arg="MODEL_DIR=models" \
     .
 ```
+
+If you want to reproduce the tester image run the following command
 
 ### Build the ibpc_tester
 
@@ -86,7 +149,19 @@ docker buildx build -t ibpc:tester \
     .
 ```
 
-## Run
+And then when you invoke `bpc test` append the argument `--tester-image ibpc:tester` to use your local build.
+
+### If you would like the training data
+
+Use the command
+```
+bpc fetch ipd_all
+```
+
+
+### Manually Run components 
+
+
 
 ### Start the Zenoh router
 

@@ -39,6 +39,10 @@ jobs:
         run: |
           cd ibpc_py
           python -m pip install -e .
+      - name: Install 7zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y 7zip
       -
         name: Run bpc fetch
         run: | 

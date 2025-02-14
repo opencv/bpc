@@ -50,7 +50,6 @@ To simplify the evaluation process, Dockerfiles are provided to generate contain
 
 Participants are expected to modify the estimator code to implement their solution. Once completed, your custom estimator should be containerized using Docker and submitted according to the challenge requirements. More detailed submission instructions will be provided soon.
 
-
 ## Validation Setup
 
 ### Requirements
@@ -94,7 +93,13 @@ Install the bpc command from the ibpc pypi package. (bpc was already taken :-( )
 pip install ibpc
 ```
 
+### Fetch the source repository
 
+```bash
+mkdir -p ~/bpc_ws
+cd ~/bpc_ws
+git clone https://github.com/opencv/bpc.git
+```
 
 ### Fetch the dataset
 
@@ -102,27 +107,40 @@ pip install ibpc
 cd ~/bpc_ws
 bpc fetch ipd
 ```
+### Build the bpc_tester image
+
+```bash
+cd ~/bpc_ws
+docker buildx build -t bpc_tester:latest \
+    --file ./Dockerfile.tester \
+    .
+```
+
+### Build the ibpc_pose_estimator
+
+We will use the following example pose estimator for the demo. 
+
+```bash
+cd ~/bpc_ws
+docker buildx build -t bpc_pose_estimator:example \
+    --file ./Dockerfile.estimator \
+    --build-arg="MODEL_DIR=models" \
+    .
+```
+
+If you use this tag the `bpc` invocation will be as follows where you use the image you just built:
+
+`bpc test bpc_pose_estimator:example ipd`
+
 
 ### Run the test
 
-The test will validate your provided image against the test dataset.
+The test will validate your pose_estimator image against the local copy of validation or test dataset.
 When you build a new image you rerun this test.
 
-**At the moment the published tester is not available.
-You will have to build it locally see below in Development to build `bpc_tester:latest` and pass `--tester-image bpc_tester:latest` as additional arguments.
-The default is `ghcr.io/opencv/bpc/bpc_tester:latest` but that's currently unavailable.
-
 ```
-bpc test <POSE_ESTIMATOR_DOCKER_TAG> ipd
+bpc test bpc_pose_estimator:example ipd --tester-image bpc_tester:latest
 ```
-
-For example:
-
-```
-bpc test ghcr.io/opencv/bpc/bpc_pose_estimator:example ipd
-```
-**Substitute your own estimator image for ghcr.io/opencv/bpc/bpc_pose_estimator:example it's not currently available.**
-If you follow the development build below the argument is `bpc_pose_estimator:example`.
 
 The console output will show the system getting started and then the output of the estimator. 
 
@@ -137,37 +155,6 @@ tail -f ibpc_test_output.log
 The results will come out as `submission.csv` when the tester is complete.
 
 
-## Pose Estimator Development
-
-Above you've learned how to validate a system. 
-It's time to learn how to create your own Pose Estimator.
-
-### Fetch the source repository
-
-```bash
-mkdir -p ~/ws_bpc/src
-cd ~/ws_bpc/src
-git clone https://github.com/opencv/bpc.git
-```
-
-### Build the ibpc_pose_estimator
-
-We will use the following example pose estimator for the demo. 
-
-```bash
-cd ~/ws_bpc/src/bpc
-docker buildx build -t bpc_pose_estimator:example \
-    --file ./Dockerfile.estimator \
-    --build-arg="MODEL_DIR=models" \
-    .
-```
-
-If you use this tag the `bpc` invocation will be as follows where you use the image you just built:
-
-`bpc test bpc_pose_estimator:example ipd`
-
-
-👷 At this point it is up to you to fork and fill in the implementation of the pose estimator. 👷
 
 ### Tips
 
@@ -200,22 +187,6 @@ The above is enough to get you going.
 However we want to be open about what else were doing.
 You can see the source of the tester and build your own version as follows if you'd like. 
 
-### Build the bpc_tester image
-
-If you want to reproduce the tester image run the following command
-
-
-This is packaged and built via a github action to `ghcr.io/opencv/bpc/bpc_tester:latest` however this is how to reproduce it. 
-
-```bash
-cd ~/ws_bpc/src/bpc
-docker buildx build -t bpc_tester:latest \
-    --file ./Dockerfile.tester \
-    .
-```
-
-And then when you invoke `bpc test` append the argument `--tester-image bpc_tester:latest` to use your local build.
-
 ### If you would like the training data
 
 Use the command:
@@ -231,19 +202,19 @@ It is possible to manually run the components.
 Or you can run as outlined below. 
 
 
-### Start the Zenoh router
+#### Start the Zenoh router
 
 ```bash
 docker run --init --rm --net host eclipse/zenoh:1.2.1 --no-multicast-scouting
 ```
 
-### Run the pose estimator
+#### Run the pose estimator
 We use [rocker](https://github.com/osrf/rocker) to add GPU support to Docker containers. To install rocker, run `pip install rocker` on the host machine.
 ```bash
 rocker --nvidia --cuda --network=host bpc_pose_estimator:example
 ```
 
-### Run the tester
+#### Run the tester
 
 > Note: Substitute the <PATH_TO_DATASET> with the directory that contains the [ipd](https://huggingface.co/datasets/bop-benchmark/ipd/tree/main) dataset. Similarly, substitute <PATH_TO_OUTPUT_DIR> with the directory that should contain the results from the pose estimator. By default, the results will be saved as a `submission.csv` file but this filename can be updated by setting the `OUTPUT_FILENAME` environment variable.
 

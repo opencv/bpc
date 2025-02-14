@@ -96,7 +96,6 @@ pip install ibpc
 ### Fetch the source repository
 
 ```bash
-mkdir -p ~/bpc_ws
 cd ~/bpc_ws
 git clone https://github.com/opencv/bpc.git
 ```

@@ -109,7 +109,7 @@ bpc fetch ipd
 ### Build the bpc_tester image
 
 ```bash
-cd ~/bpc_ws
+cd ~/bpc_ws/bpc
 docker buildx build -t bpc_tester:latest \
     --file ./Dockerfile.tester \
     .
@@ -120,7 +120,7 @@ docker buildx build -t bpc_tester:latest \
 We will use the following example pose estimator for the demo. 
 
 ```bash
-cd ~/bpc_ws
+cd ~/bpc_ws/bpc
 docker buildx build -t bpc_pose_estimator:example \
     --file ./Dockerfile.estimator \
     --build-arg="MODEL_DIR=models" \

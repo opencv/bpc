@@ -116,7 +116,7 @@ jobs:
           cat ibpc_zenoh_output.log
           cat submission.csv
   public_image:
-    name: Test Public Image BUild
+    name: Test Public Image Build
     needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30

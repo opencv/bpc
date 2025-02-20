@@ -193,6 +193,11 @@ def main():
     test_parser.add_argument("--result_directory", action="store", default=".")
     test_parser.add_argument("--debug-inside", action="store_true")
     test_parser.add_argument(
+        "--no-gpu",
+        action="store_true",
+        help="Don't try to mount an NVIDIA gpu automatically.",
+    )
+    test_parser.add_argument(
         "--tester-image", default="ghcr.io/opencv/bpc/bpc_tester:latest"
     )
 
@@ -273,7 +278,9 @@ def main():
     args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
-    args_dict["cuda"] = True
+    if not args_dict[no_gpu]:
+        args_dict["cuda"] = True
+        args_dict["nvidia"] = True
 
     # Confirm dataset directory is absolute
     args_dict["dataset_directory"] = os.path.abspath(args_dict["dataset_directory"])

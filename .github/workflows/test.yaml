@@ -64,7 +64,7 @@ jobs:
        name: Run bpc test
        continue-on-error: true
        run: |
-         bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest
+         bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest --no-gpu
       -
        name: Check Disk space
        run: |

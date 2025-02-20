@@ -41,8 +41,8 @@ jobs:
           name: ipd-dataset
           path: ipd
 
-  basic_ci:
-    name: Basic CI
+  local_build:
+    name: Test Local Build
     needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -98,8 +98,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ipd-dataset
+          path: ipd
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -lR
       -
        name: Run bpc test local build
        continue-on-error: true
@@ -116,7 +117,7 @@ jobs:
           cat ibpc_zenoh_output.log
           cat submission.csv
   public_image:
-    name: Test Public Image Build
+    name: Test Public Image
     needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -158,8 +159,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ipd-dataset
+          path: ipd
       - name: Display structure of downloaded files
-        run: ls -R
+        run: ls -lR
       -
        name: Run bpc test public build
        continue-on-error: true

@@ -7,18 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      # -
-      #   name: Remove unused content for disk space
-      #   shell: bash
-      #   run: |
-      #       df -h
-      #       sudo rm -rf /usr/share/dotnet
-      #       sudo rm -rf /usr/local/lib/android
-      #       sudo rm -rf /opt/ghc
-      #       sudo rm -rf /opt/hostedtoolcache/CodeQL
-      #       sudo docker image prune --all --force
-      #       sudo docker builder prune -a
-      #       df -h
       -
         name: Checkout
         uses: actions/checkout@v4
@@ -79,6 +67,8 @@ jobs:
           file: Dockerfile.estimator
           load: true
           tags: pose_estimator:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       -
         name: Build tester
         uses: docker/build-push-action@v6
@@ -86,6 +76,8 @@ jobs:
           file: Dockerfile.tester
           load: true
           tags: estimator-tester:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       -
         name: Build ibpc_py
         run: |

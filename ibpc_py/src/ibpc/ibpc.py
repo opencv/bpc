@@ -278,7 +278,7 @@ def main():
     args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
-    if not args_dict[no_gpu]:
+    if not args_dict["no_gpu"]:
         args_dict["cuda"] = True
         args_dict["nvidia"] = True
 

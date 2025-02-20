@@ -2,8 +2,48 @@ name: Basic CI
 on: [push]
 
 jobs:
+  ipd_fetch:
+    name: Fetch ipd dataset
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # -
+      #   name: Remove unused content for disk space
+      #   shell: bash
+      #   run: |
+      #       df -h
+      #       sudo rm -rf /usr/share/dotnet
+      #       sudo rm -rf /usr/local/lib/android
+      #       sudo rm -rf /opt/ghc
+      #       sudo rm -rf /opt/hostedtoolcache/CodeQL
+      #       sudo docker image prune --all --force
+      #       sudo docker builder prune -a
+      #       df -h
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Build ibpc_py
+        run: |
+          cd ibpc_py
+          python -m pip install -e .
+      - name: Check space
+        run: |
+          df -h
+      -
+        name: Run bpc fetch
+        run: | 
+          bpc fetch ipd  --remove-zip-after-extract
+          df -h
+      -
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipd-dataset
+          path: ipd
+
   basic_ci:
     name: Basic CI
+    needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -55,11 +95,11 @@ jobs:
         run: |
           df -h
           docker images
-      -
-        name: Run bpc fetch
-        run: | 
-          bpc fetch ipd  --remove-zip-after-extract
-          df -h
+      - uses: actions/download-artifact@v4
+        with:
+          name: ipd-dataset
+      - name: Display structure of downloaded files
+        run: ls -R
       -
        name: Run bpc test local build
        continue-on-error: true
@@ -77,6 +117,7 @@ jobs:
           cat submission.csv
   public_image:
     name: Test Public Image BUild
+    needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -114,11 +155,11 @@ jobs:
         run: |
           df -h
           docker images
-      -
-        name: Run bpc fetch
-        run: | 
-          bpc fetch ipd  --remove-zip-after-extract
-          df -h
+      - uses: actions/download-artifact@v4
+        with:
+          name: ipd-dataset
+      - name: Display structure of downloaded files
+        run: ls -R
       -
        name: Run bpc test public build
        continue-on-error: true

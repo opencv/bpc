@@ -2,8 +2,36 @@ name: Basic CI
 on: [push]
 
 jobs:
-  basic_ci:
-    name: Basic CI
+  ipd_fetch:
+    name: Fetch ipd dataset
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Build ibpc_py
+        run: |
+          cd ibpc_py
+          python -m pip install -e .
+      - name: Check space
+        run: |
+          df -h
+      -
+        name: Run bpc fetch
+        run: | 
+          bpc fetch ipd  --remove-zip-after-extract
+          df -h
+      -
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipd-dataset
+          path: ipd
+
+  local_build:
+    name: Test Local Build
+    needs: ipd_fetch
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -39,6 +67,8 @@ jobs:
           file: Dockerfile.estimator
           load: true
           tags: pose_estimator:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       -
         name: Build tester
         uses: docker/build-push-action@v6
@@ -46,6 +76,8 @@ jobs:
           file: Dockerfile.tester
           load: true
           tags: estimator-tester:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       -
         name: Build ibpc_py
         run: |
@@ -55,13 +87,14 @@ jobs:
         run: |
           df -h
           docker images
+      - uses: actions/download-artifact@v4
+        with:
+          name: ipd-dataset
+          path: ipd
+      - name: Display structure of downloaded files
+        run: ls -lR
       -
-        name: Run bpc fetch
-        run: | 
-          bpc fetch ipd  --remove-zip-after-extract
-          df -h
-      -
-       name: Run bpc test
+       name: Run bpc test local build
        continue-on-error: true
        run: |
          bpc test pose_estimator:latest ipd --tester-image estimator-tester:latest --no-gpu
@@ -70,12 +103,67 @@ jobs:
        run: |
           df -h
       -
-       name: Check results
+       name: Check results exist
        run: |
           cat ibpc_test_output.log
           cat ibpc_zenoh_output.log
           cat submission.csv
-
-#TODO(tfoote) Also add tests for public images
+  public_image:
+    name: Test Public Image
+    needs: ipd_fetch
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      -
+        name: Remove unused content for disk space
+        shell: bash
+        run: |
+            df -h
+            sudo rm -rf /usr/share/dotnet
+            sudo rm -rf /usr/local/lib/android
+            sudo rm -rf /opt/ghc
+            sudo rm -rf /opt/hostedtoolcache/CodeQL
+            sudo docker image prune --all --force
+            sudo docker builder prune -a
+            df -h
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      # -
+      #   name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build ibpc_py
+        run: |
+          cd ibpc_py
+          python -m pip install -e .
+      - name: Check space
+        run: |
+          df -h
+          docker images
+      - uses: actions/download-artifact@v4
+        with:
+          name: ipd-dataset
+          path: ipd
+      - name: Display structure of downloaded files
+        run: ls -lR
+      -
+       name: Run bpc test public build
+       continue-on-error: true
+       run: |
+         bpc test ghcr.io/opencv/bpc/bpc_pose_estimator:example ipd
+      -
+       name: Check results exist
+       run: |
+          cat ibpc_test_output.log
+          cat ibpc_zenoh_output.log
+          cat submission.csv
 
 

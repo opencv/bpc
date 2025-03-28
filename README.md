@@ -122,7 +122,7 @@ Pull the Baseline Solution code
 
 ```bash
 cd ~/bpc_ws/bpc
-wget https://storage.googleapis.com/akasha-public/IBPC/baseline_solution/v1/models.zip
+wget https://huggingface.co/DrQY/BOP_baseline_model/resolve/main/models.zip
 unzip models.zip
 rm models.zip
 git clone https://github.com/CIRP-Lab/bpc_baseline

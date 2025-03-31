@@ -1,0 +1,25 @@
+metadata {
+  id {
+    package: "ai.intrinsic"
+    name: "bpc_pose_estimator"
+  }
+  vendor {
+    display_name: "Intrinsic"
+  }
+  documentation {
+    description: "A 6D pose estimator for objects in the BPC challenge."
+  }
+  display_name: "BPC Pose Estimator"
+}
+service_def {
+  real_spec {
+    image {
+      archive_filename: "bpc_pose_estimator.tar"
+    }
+  }
+  sim_spec {
+    image {
+      archive_filename: "bpc_pose_estimator.tar"
+    }
+  }
+}

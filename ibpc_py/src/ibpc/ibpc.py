@@ -278,7 +278,9 @@ def main():
     args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
-    args_dict["volume"] = [[f"{args_dict['dataset']}/models:/opt/ros/underlay/install/3d_models"], ]
+    args_dict["volume"] = [
+        [f"{args_dict['dataset']}/models:/opt/ros/underlay/install/3d_models"],
+    ]
     if not args_dict["no_gpu"]:
         args_dict["cuda"] = True
         args_dict["nvidia"] = True

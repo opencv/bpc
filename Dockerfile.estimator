@@ -57,12 +57,8 @@ FROM base
 ARG SERVICE_PACKAGE=ibpc_pose_estimator_py
 ARG SERVICE_EXECUTABLE_NAME=ibpc_pose_estimator
 
-RUN apt update \
-    && sudo apt install curl -y \
-    && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2-testing/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
 RUN apt-get update \
+    && apt upgrade -y \
     &&  apt install -y ros-jazzy-rmw-zenoh-cpp python3-imageio python3-png python3-pip python3-scipy \
     && rm -rf /var/lib/apt/lists/*
 

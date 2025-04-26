@@ -77,10 +77,10 @@ ipd_core = {
 
 ipd_files = {
     "ipd_test_all.zip": "e1b042f046d7d07f8c8811f7739fb68a25ad8958d1b58c5cbc925f98096eb6f9",
-    "ipd_train_pbr.zip": "f0c74e9115e0d89f19389f81d38b0e9d28952a9481bf7d7a44e9fb68a65522d7",
-    "ipd_train_pbr.z01": "81efe77836a5ec2beaa62d2267eea751bf7d888e9f782efc9cb07f19ab507d8b",
-    "ipd_train_pbr.z02": "0d210eb0b5d3d8aec00cac3d3dd5bc419f2a8e792b721eb11a9f647064c5364e",
-    "ipd_train_pbr.z03": "d09b43b33b2a89e3a144d5276df48fda26beabe35492014395133bc23fc23f37",
+    "ipd_train_pbr.zip": "766efd4a25fc1a297e7d150e6293c485b8c65a56ac5596270d02d7d8c3ba48c0",
+    "ipd_train_pbr.z01": "2c032236173761945747613e688d7a903568973b494e2b4ed480be050d774203",
+    "ipd_train_pbr.z02": "113c0ffdbd4e9632bee1af581f8fd669c5f0c451409f7a5b9e7ce5630f3550e3",
+    "ipd_train_pbr.z03": "196f7a2b6ce23ee7998d68ab7a7e0fcf47cf4bbacfbe2e07f6e2828a79c7c3c1",
     "ipd_test_all.z01": "25ce71feb7d9811db51772e44ebc981d57d9f10c91776707955ab1e616346cb3",
 }
 ipd_files.update(ipd_core)
@@ -278,6 +278,9 @@ def main():
     args_dict["name"] = ESTIMATOR_CONTAINER
     args_dict["network"] = "host"
     args_dict["extension_blacklist"] = ({},)
+    args_dict["volume"] = [
+        [f"{args_dict['dataset']}/models:/opt/ros/underlay/install/3d_models"],
+    ]
     if not args_dict["no_gpu"]:
         args_dict["cuda"] = True
         args_dict["nvidia"] = True

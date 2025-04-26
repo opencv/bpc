@@ -1,0 +1,16 @@
+# Use the bpc pose estimator image as the base image.
+ARG BASE_IMAGE=bpc_pose_estimator:example
+
+FROM ${BASE_IMAGE}
+
+# Copy the zenoh config file.
+# TODO(Yadunund): Switch to ZENOH_CONFIG_OVERRIDE after the next jazzy sync.
+COPY zenoh_config.json5 /opt/zenoh_config.json5
+
+# Set environment variables
+ENV ZENOH_SESSION_CONFIG_URI=/opt/zenoh_config.json5
+ENV ZENOH_ROUTER_CHECK_ATTEMPTS=5
+# (Optional) If you need to override the entrypoint or command, do it here.
+# For example:
+# ENTRYPOINT ["/your/new/entrypoint.sh"]
+# CMD ["your", "new", "command"]

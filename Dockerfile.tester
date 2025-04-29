@@ -12,6 +12,10 @@ FROM base AS underlay
 
 ADD ibpc_interfaces /opt/ros/underlay/src/ibpc_interfaces
 
+# Install rmw_zenoh pinned at 0.2.3 from source.
+RUN cd /opt/ros/underlay/src/ \
+    && git clone https://github.com/ros2/rmw_zenoh && cd rmw_zenoh && git checkout 0.2.3 && cd ../../
+
 RUN . /opt/ros/jazzy/setup.sh \
     && apt-get update \
     && rosdep update \
@@ -21,10 +25,6 @@ RUN . /opt/ros/jazzy/setup.sh \
     --merge-install
 
 FROM underlay AS overlay
-
-RUN apt-get update \
-    &&  apt install -y ros-jazzy-rmw-zenoh-cpp \
-    && rm -rf /var/lib/apt/lists/*
 
 ADD ibpc_tester /opt/ros/overlay/src/ibpc_tester
 
@@ -43,7 +43,7 @@ FROM base
 
 RUN apt-get update \
     && apt upgrade -y \
-    &&  apt install -y ros-jazzy-rmw-zenoh-cpp python3-imageio python3-pandas python3-png python3-pip python3-scipy \
+    &&  apt install -y python3-imageio python3-pandas python3-png python3-pip python3-scipy \
     && rm -rf /var/lib/apt/lists/*
 
 # TODO remove deprecated pytz usage

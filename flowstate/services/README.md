@@ -29,15 +29,15 @@ cd ~/
 git clone https://github.com/intrinsic-ai/sdk.git
 cd sdk
 bazel run //intrinsic/tools/inbuild -- service bundle \
-  --manifest ~/bpc_ws/src/bpc/services/flowstate/bpc_pose_estimator.manifest.textproto \
-  --oci_image ~/bpc_ws/src/bpc/services/flowstate/bpc_pose_estimator.tar \
-  --output ~/bpc_ws/src/bpc/services/flowstate/bpc_pose_estimator.bundle.tar
+  --manifest ~/bpc_ws/src/bpc/flowstate/services/bpc_pose_estimator.manifest.textproto \
+  --oci_image ~/bpc_ws/src/bpc/flowstate/services/bpc_pose_estimator.tar \
+  --output ~/bpc_ws/src/bpc/flowstate/services/bpc_pose_estimator.bundle.tar
 ```
 
 Finally install the Service in a running solution.
 
 ```bash
-bazel run //intrinsic/tools/inctl -- service install ~/bpc_ws/src/bpc/services/flowstate/bpc_pose_estimator.bundle.tar \
+bazel run //intrinsic/tools/inctl -- service install ~/bpc_ws/src/bpc/flowstate/services/bpc_pose_estimator.bundle.tar \
   --cluster CLUSTER_ID \
   --org ORG \
   --registry REGISTRY \

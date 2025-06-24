@@ -15,22 +15,11 @@ service_def {
   real_spec {
     image {
       archive_filename: "bpc_pose_estimator.tar"
-      settings {
-        resource_requirements {
-          limits: { key: "nvidia.com/gpu" value: "1" }
-        }
-        requires_rtpc_node: true
-      }
     }
   }
   sim_spec {
     image {
       archive_filename: "bpc_pose_estimator.tar"
-      settings {
-        resource_requirements {
-          limits: { key: "nvidia.com/gpu" value: "1" }
-        }
-      }
     }
   }
 }

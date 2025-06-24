@@ -6,10 +6,14 @@ FROM ${BASE_IMAGE}
 # Copy the zenoh config file.
 # TODO(Yadunund): Switch to ZENOH_CONFIG_OVERRIDE after the next jazzy sync.
 COPY zenoh_config.json5 /opt/zenoh_config.json5
+# For one-shot solutions - need to have the 3d_models directory in the folder 
+# containing the 3d models used by the solution
+ADD 3d_models /opt/ros/underlay/install/3d_models
 
 # Set environment variables
 ENV ZENOH_SESSION_CONFIG_URI=/opt/zenoh_config.json5
 ENV ZENOH_ROUTER_CHECK_ATTEMPTS=5
+ENV LD_LIBRARY_PATH="/usr/local/nvidia/lib64:/usr/local/nvidia/bin:${LD_LIBRARY_PATH:-}"
 # (Optional) If you need to override the entrypoint or command, do it here.
 # For example:
 # ENTRYPOINT ["/your/new/entrypoint.sh"]
